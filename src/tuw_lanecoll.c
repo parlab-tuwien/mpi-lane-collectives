@@ -148,6 +148,7 @@ int Get_Lane_comms(MPI_Comm comm, MPI_Comm *nodecomm, MPI_Comm *lanecomm)
 int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root,
 	       MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
   
@@ -163,7 +164,10 @@ int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root,
 
   MPI_Type_get_extent(datatype,&lb,&extent);
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
   
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -213,6 +217,7 @@ int Gather_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -221,7 +226,10 @@ int Gather_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 
   MPI_Aint lb, extent;
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -283,6 +291,7 @@ int Scatter_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		 void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		 MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -291,7 +300,10 @@ int Scatter_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 
   MPI_Aint lb, extent;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -374,6 +386,7 @@ int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		   void *recvbuf, int recvcount, MPI_Datatype recvtype,
 		   MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -385,7 +398,10 @@ int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
   MPI_Datatype nt, nodetype;
   MPI_Datatype lt, lanetype;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   //MPI_Comm_rank(comm,&rank);
   MPI_Comm_size(lanecomm,&lanesize);
@@ -434,6 +450,7 @@ int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		   void *recvbuf, int recvcount, MPI_Datatype recvtype,
 		   MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -449,7 +466,10 @@ int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
   MPI_Comm_rank(comm,&rank);
   MPI_Comm_size(comm,&size);
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(lanecomm,&lanerank);
   MPI_Comm_size(lanecomm,&lanesize);
@@ -503,6 +523,7 @@ int Reduce_lane(void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, int root, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -517,7 +538,10 @@ int Reduce_lane(void *sendbuf,
 
   MPI_Comm_rank(comm,&rank);
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -579,6 +603,7 @@ int Allreduce_lane(const void *sendbuf,
 		   void *recvbuf, int count, MPI_Datatype datatype,
 		   MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -587,7 +612,10 @@ int Allreduce_lane(const void *sendbuf,
 
   MPI_Aint lb, extent;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -635,6 +663,7 @@ int Reduce_scatter_block_lane(void *sendbuf,
 			      void *recvbuf, int count, MPI_Datatype datatype,
 			      MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -645,7 +674,10 @@ int Reduce_scatter_block_lane(void *sendbuf,
 
   void *permbuf, *tempbuf;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_size(nodecomm,&nodesize);
   MPI_Comm_size(lanecomm,&lanesize);
@@ -696,6 +728,7 @@ int Scan_lane(const void *sendbuf,
 	      void *recvbuf, int count, MPI_Datatype datatype,
 	      MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -708,7 +741,10 @@ int Scan_lane(const void *sendbuf,
   const void *takebuf;
   void *tempbuf;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -764,6 +800,7 @@ int Exscan_lane(void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -775,7 +812,10 @@ int Exscan_lane(void *sendbuf,
   
   void *takebuf, *tempbuf;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -841,6 +881,7 @@ int Alltoall_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		  void *recvbuf, int recvcount, MPI_Datatype recvtype,
 		  MPI_Comm comm)		  
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -854,7 +895,10 @@ int Alltoall_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
   
   MPI_Comm_size(comm,&size);
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_size(lanecomm,&lanesize);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -884,6 +928,7 @@ int Alltoall_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 int Bcast_hier(void *buffer, int count, MPI_Datatype datatype, int root,
 	       MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
   
@@ -894,7 +939,10 @@ int Bcast_hier(void *buffer, int count, MPI_Datatype datatype, int root,
   MPI_Comm_size(comm,&size);
   if (count==0||size==1) return MPI_SUCCESS;
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
   
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -915,6 +963,7 @@ int Gather_hier(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -925,7 +974,10 @@ int Gather_hier(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 
   void *tempbuf = NULL;
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -973,6 +1025,7 @@ int Scatter_hier(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		 void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		 MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -983,7 +1036,10 @@ int Scatter_hier(void *sendbuf, int sendcount, MPI_Datatype sendtype,
 
   void *tempbuf = NULL;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -1030,6 +1086,7 @@ int Allgather_hier(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		   void *recvbuf, int recvcount, MPI_Datatype recvtype,
 		   MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -1041,7 +1098,10 @@ int Allgather_hier(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 
   MPI_Aint lb, extent;
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(comm,&rank);
   MPI_Comm_size(comm,&size);
@@ -1079,6 +1139,7 @@ int Reduce_hier(void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, int root, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -1089,7 +1150,10 @@ int Reduce_hier(void *sendbuf,
 
   void *tempbuf = NULL;
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -1122,6 +1186,7 @@ int Allreduce_hier(const void *sendbuf,
 		   void *recvbuf, int count, MPI_Datatype datatype,
 		   MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -1129,7 +1194,10 @@ int Allreduce_hier(const void *sendbuf,
   
   const void *takebuf;
 
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(comm,&rank);
   MPI_Comm_size(comm,&size);
@@ -1154,6 +1222,7 @@ int Reduce_scatter_block_hier(void *sendbuf,
 			      void *recvbuf, int count, MPI_Datatype datatype,
 			      MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -1164,7 +1233,10 @@ int Reduce_scatter_block_hier(void *sendbuf,
 
   void *tempbuf = NULL;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -1198,6 +1270,7 @@ int Scan_hier(void *sendbuf,
 	      void *recvbuf, int count, MPI_Datatype datatype,
 	      MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -1207,7 +1280,10 @@ int Scan_hier(void *sendbuf,
   
   void *takebuf, *tempbuf;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -1242,6 +1318,7 @@ int Scan_hier(const void *sendbuf,
 	      void *recvbuf, int count, MPI_Datatype datatype,
 	      MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -1251,7 +1328,10 @@ int Scan_hier(const void *sendbuf,
   
   void *tempbuf;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
@@ -1279,6 +1359,7 @@ int Exscan_hier(void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, MPI_Comm comm)
 {
+  static MPI_Comm decomm   = MPI_COMM_NULL;
   static MPI_Comm nodecomm = MPI_COMM_NULL;
   static MPI_Comm lanecomm = MPI_COMM_NULL;
 
@@ -1288,7 +1369,10 @@ int Exscan_hier(void *sendbuf,
   
   void *takebuf, *tempbuf;
   
-  if (nodecomm==MPI_COMM_NULL) Get_Lane_comms(comm,&nodecomm,&lanecomm);
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
 
   MPI_Comm_rank(nodecomm,&noderank);
   MPI_Comm_size(nodecomm,&nodesize);
