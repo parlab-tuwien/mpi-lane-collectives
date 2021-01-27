@@ -32,6 +32,8 @@ static int lanedel(MPI_Comm comm, int keyval, void *attr, void *s) {
   MPI_Comm_free(&decomposition->nodecomm);
   MPI_Comm_free(&decomposition->lanecomm);
   
+  free(decomposition);
+  
   return MPI_SUCCESS;
 }
 
