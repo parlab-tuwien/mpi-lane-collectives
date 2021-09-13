@@ -3,7 +3,7 @@
 
 ## Citing article
 
-**Jesper Larsson Träff** and **Sascha Hunold**. 2019. *Decomposing MPI Collectives for Exploiting Multi-lane Communication*. In CLUSTER, 2020, IEEE.
+**Jesper Larsson Träff** and **Sascha Hunold**. 2020. *Decomposing MPI Collectives for Exploiting Multi-lane Communication*. In CLUSTER, 2020, IEEE.
 
 ## Build Library and Test Code
 
