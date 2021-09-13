@@ -7,7 +7,7 @@
 
 ## Build Library and Test Code
 
-The file `tuw_lanecoll_bench_all.c` contains some test code, from which we stripped the entire timing code.
+The file `tuw_lanecoll_bench_all.c` contains some test code, from which we **stripped the entire timing code**.
 (The timing code use some in-house, non-portable way of benchmarking specific functions. For the sake of portability, we removed these bits of code.)
 Now, you can see how to set up the benchmarks and how to run the collectives. You would simply need to add your custom timing code.
 
