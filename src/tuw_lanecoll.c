@@ -383,8 +383,7 @@ int Scatter_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
   return MPI_SUCCESS;
 }
 
-#if ENABLE_ZEROCOPY == 1
-int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
+int Allgather_lane_zerocopy(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		   void *recvbuf, int recvcount, MPI_Datatype recvtype,
 		   MPI_Comm comm)
 {
@@ -447,7 +446,7 @@ int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 
   return MPI_SUCCESS;
 }
-#else
+
 int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		   void *recvbuf, int recvcount, MPI_Datatype recvtype,
 		   MPI_Comm comm)
@@ -519,7 +518,6 @@ int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
   
   return MPI_SUCCESS;
 }
-#endif
 
 int Reduce_lane(void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
