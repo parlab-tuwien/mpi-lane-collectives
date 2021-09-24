@@ -215,7 +215,7 @@ int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root,
   return MPI_SUCCESS;
 }
 
-int Gather_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
+int Gather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		MPI_Comm comm)
 {
@@ -289,7 +289,7 @@ int Gather_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
   return MPI_SUCCESS;
 }
 
-int Scatter_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
+int Scatter_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		 void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		 MPI_Comm comm)
 {
@@ -519,7 +519,7 @@ int Allgather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
   return MPI_SUCCESS;
 }
 
-int Reduce_lane(void *sendbuf,
+int Reduce_lane(const void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, int root, MPI_Comm comm)
 {
@@ -556,7 +556,7 @@ int Reduce_lane(void *sendbuf,
 
   block = count/nodesize;
 
-  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : sendbuf;
+  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : (void*)sendbuf;
 
   if (USEREGCOLL&&count%nodesize==0) {
     counts[noderank] = block;
@@ -659,7 +659,7 @@ int Allreduce_lane(const void *sendbuf,
   return MPI_SUCCESS;
 }
 
-int Reduce_scatter_block_lane(void *sendbuf,
+int Reduce_scatter_block_lane(const void *sendbuf,
 			      void *recvbuf, int count, MPI_Datatype datatype,
 			      MPI_Op op, MPI_Comm comm)
 {
@@ -762,7 +762,7 @@ int Scan_lane(const void *sendbuf,
 
   tempbuf = mpitalloc(count,datatype,&lb,&extent);
   
-  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : sendbuf;
+  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : (void*)sendbuf;
   if (USEREGCOLL&&count%nodesize==0) {
     MPI_Reduce_scatter_block(takebuf,
 			     (char*)tempbuf+noderank*block*extent,
@@ -796,7 +796,7 @@ int Scan_lane(const void *sendbuf,
   return MPI_SUCCESS;
 }
 
-int Exscan_lane(void *sendbuf,
+int Exscan_lane(const void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, MPI_Comm comm)
 {
@@ -833,7 +833,7 @@ int Exscan_lane(void *sendbuf,
 
   tempbuf = mpitalloc(count,datatype,&lb,&extent);
   
-  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : sendbuf;
+  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : (void*)sendbuf;
   if (USEREGCOLL&&count%nodesize==0) {
     MPI_Reduce_scatter_block(takebuf,
 			     (char*)tempbuf+noderank*block*extent,
@@ -877,7 +877,7 @@ int Exscan_lane(void *sendbuf,
   return MPI_SUCCESS;
 }
 
-int Alltoall_lane(void *sendbuf, int sendcount, MPI_Datatype sendtype,
+int Alltoall_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		  void *recvbuf, int recvcount, MPI_Datatype recvtype,
 		  MPI_Comm comm)		  
 {
@@ -959,7 +959,7 @@ int Bcast_hier(void *buffer, int count, MPI_Datatype datatype, int root,
   return MPI_SUCCESS;
 }
 
-int Gather_hier(void *sendbuf, int sendcount, MPI_Datatype sendtype,
+int Gather_hier(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		MPI_Comm comm)
 {
@@ -1021,7 +1021,7 @@ int Gather_hier(void *sendbuf, int sendcount, MPI_Datatype sendtype,
   return MPI_SUCCESS;
 }
 
-int Scatter_hier(void *sendbuf, int sendcount, MPI_Datatype sendtype,
+int Scatter_hier(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
 		 void *recvbuf, int recvcount, MPI_Datatype recvtype, int root,
 		 MPI_Comm comm)
 {
@@ -1135,7 +1135,7 @@ int Allgather_hier(const void *sendbuf, int sendcount, MPI_Datatype sendtype,
   return MPI_SUCCESS;
 }
 
-int Reduce_hier(void *sendbuf,
+int Reduce_hier(const void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, int root, MPI_Comm comm)
 {
@@ -1205,7 +1205,7 @@ int Allreduce_hier(const void *sendbuf,
   MPI_Comm_size(nodecomm,&nodesize);
   MPI_Comm_rank(lanecomm,&lanerank);
 
-  takebuf = (sendbuf==MPI_IN_PLACE&&noderank!=0) ? recvbuf : sendbuf;
+  takebuf = (sendbuf==MPI_IN_PLACE&&noderank!=0) ? recvbuf : (void*)sendbuf;
   
   MPI_Reduce(takebuf,recvbuf,count,datatype,op,0,nodecomm);
   
@@ -1218,7 +1218,7 @@ int Allreduce_hier(const void *sendbuf,
   return MPI_SUCCESS;
 }
 
-int Reduce_scatter_block_hier(void *sendbuf,
+int Reduce_scatter_block_hier(const void *sendbuf,
 			      void *recvbuf, int count, MPI_Datatype datatype,
 			      MPI_Op op, MPI_Comm comm)
 {
@@ -1355,7 +1355,7 @@ int Scan_hier(const void *sendbuf,
 }
 #endif
 
-int Exscan_hier(void *sendbuf,
+int Exscan_hier(const void *sendbuf,
 		void *recvbuf, int count, MPI_Datatype datatype,
 		MPI_Op op, MPI_Comm comm)
 {
@@ -1380,7 +1380,7 @@ int Exscan_hier(void *sendbuf,
 
   tempbuf = mpitalloc(count,datatype,&lb,&extent);
 
-  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : sendbuf;
+  takebuf = (sendbuf==MPI_IN_PLACE) ? recvbuf : (void*)sendbuf;
   if (noderank==nodesize-1)  {
     MPI_Sendrecv(takebuf,count,datatype,0,SELFCOPY,
 		 tempbuf,count,datatype,0,SELFCOPY,
