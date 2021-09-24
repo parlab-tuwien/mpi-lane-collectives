@@ -132,11 +132,11 @@ int Get_Lane_comms(MPI_Comm comm, MPI_Comm *nodecomm, MPI_Comm *lanecomm)
 {
   laneattr *decomposition;
   int flag;
-  
-  MPI_Comm_get_attr(comm,lanekey(),&decomposition,&flag);
+
+  PMPI_Comm_get_attr(comm,lanekey(),&decomposition,&flag);
   if (!flag) {
     laneinit(comm);
-    MPI_Comm_get_attr(comm,lanekey(),&decomposition,&flag);
+    PMPI_Comm_get_attr(comm,lanekey(),&decomposition,&flag);
     assert(flag);
   }
   
@@ -161,19 +161,19 @@ int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root,
   
   MPI_Aint lb, extent;
 
-  MPI_Comm_size(comm,&size);
+  PMPI_Comm_size(comm,&size);
   if (count==0||size==1) return MPI_SUCCESS;
 
-  MPI_Type_get_extent(datatype,&lb,&extent);
+  PMPI_Type_get_extent(datatype,&lb,&extent);
 
   if (comm!=decomm) {
     Get_Lane_comms(comm,&nodecomm,&lanecomm);
     decomm = comm;
   }
-  
-  MPI_Comm_rank(nodecomm,&noderank);
-  MPI_Comm_size(nodecomm,&nodesize);
-  MPI_Comm_rank(lanecomm,&lanerank);
+
+  PMPI_Comm_rank(nodecomm,&noderank);
+  PMPI_Comm_size(nodecomm,&nodesize);
+  PMPI_Comm_rank(lanecomm,&lanerank);
 
   rootnode = root/nodesize;
   noderoot = root%nodesize;
@@ -194,21 +194,21 @@ int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root,
     void *recbuf = (noderank==noderoot) ?
       MPI_IN_PLACE : (char*)buffer+noderank*block*extent;
     if (USEREGCOLL&&count%nodesize==0) {
-      MPI_Scatter(buffer,blockcount,datatype,
+      PMPI_Scatter(buffer,blockcount,datatype,
 		  recbuf,blockcount,datatype,noderoot,nodecomm);
     } else {
-      MPI_Scatterv(buffer,counts,displs,datatype,
+      PMPI_Scatterv(buffer,counts,displs,datatype,
 		   recbuf,blockcount,datatype,noderoot,nodecomm);
     }
   }
-  MPI_Bcast((char*)buffer+noderank*block*extent,blockcount,datatype,
+  PMPI_Bcast((char*)buffer+noderank*block*extent,blockcount,datatype,
   	    rootnode,lanecomm);
   
   if (USEREGCOLL&&count%nodesize==0) {
-    MPI_Allgather(MPI_IN_PLACE,0,datatype,
+    PMPI_Allgather(MPI_IN_PLACE,0,datatype,
 		  buffer,blockcount,datatype,nodecomm);
   } else {
-    MPI_Allgatherv(MPI_IN_PLACE,0,datatype,
+    PMPI_Allgatherv(MPI_IN_PLACE,0,datatype,
 		   buffer,counts,displs,datatype,nodecomm);
   }
   
