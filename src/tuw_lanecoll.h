@@ -10,10 +10,13 @@
 
 #include <mpi.h>
 
+extern const int USEREGCOLL;
+
 int Get_Lane_comms(MPI_Comm comm, MPI_Comm *nodecomm, MPI_Comm *lanecomm);
 
 int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
 
+int Bcast_lane_on_lane(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
 
 int Gather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount,
     MPI_Datatype recvtype, int root, MPI_Comm comm);

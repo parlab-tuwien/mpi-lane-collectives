@@ -1,7 +1,7 @@
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.22)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
+#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
    
 project(multilanecomm)
 
@@ -29,6 +29,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MY_COMPILE_FLAGS}")
 set(LANE_COMMON_SRC_FILES
 ${SRC_DIR}/tuw_lanecoll.c
 ${SRC_DIR}/tuw_lanecoll.h
+${SRC_DIR}/tuw_lane_bcast.c
 )
 
 add_executable(lanetest_all
