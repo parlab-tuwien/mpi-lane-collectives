@@ -17,17 +17,17 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}")
 #    CACHE STRING "Configure project to use a specific platform file")
 #include(${INCLUDE_PLATFORM_CONFIG_FILE})
 
-option(DISABLE_ZERO_COPY "Disable zero-copy collectives [default: enabled]" off)
+#option(DISABLE_ZERO_COPY "Disable zero-copy collectives [default: enabled]" off)
 
-SET(MY_COMPILE_FLAGS "")
+#SET(MY_COMPILE_FLAGS "")
 
-if(DISABLE_ZERO_COPY)
-    SET(MY_COMPILE_FLAGS "${MY_COMPILE_FLAGS} -DENABLE_ZEROCOPY=0")
-else()
-    SET(MY_COMPILE_FLAGS "${MY_COMPILE_FLAGS} -DENABLE_ZEROCOPY=1")
-endif()
+#if(DISABLE_ZERO_COPY)
+#    SET(MY_COMPILE_FLAGS "${MY_COMPILE_FLAGS} -DENABLE_ZEROCOPY=0")
+#else()
+#    SET(MY_COMPILE_FLAGS "${MY_COMPILE_FLAGS} -DENABLE_ZEROCOPY=1")
+#endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MY_COMPILE_FLAGS}")
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MY_COMPILE_FLAGS}")
 
 set(LANE_COMMON_SRC_FILES
 ${SRC_DIR}/tuw_lanecoll.c
