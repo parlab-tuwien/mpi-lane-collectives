@@ -3,16 +3,19 @@ cmake_minimum_required(VERSION 3.22)
 
 #set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
    
-project(multilanecomm)
+project(multilanecomm
+        VERSION 0.1.0
+        LANGUAGES C)
+
+find_package(MPI REQUIRED)
 
 set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}")
 
-
-set(INCLUDE_PLATFORM_CONFIG_FILE "${CMAKE_SOURCE_DIR}/platform_files/default.cmake" 
-    CACHE STRING "Configure project to use a specific platform file")
-include(${INCLUDE_PLATFORM_CONFIG_FILE})
+#set(INCLUDE_PLATFORM_CONFIG_FILE "${CMAKE_SOURCE_DIR}/platform_files/default.cmake"
+#    CACHE STRING "Configure project to use a specific platform file")
+#include(${INCLUDE_PLATFORM_CONFIG_FILE})
 
 option(DISABLE_ZERO_COPY "Disable zero-copy collectives [default: enabled]" off)
 
@@ -38,17 +41,14 @@ ${SRC_DIR}/tuw_lanecoll_bench_all.c
 ${SRC_DIR}/tuw_lanecoll_argparse.c
 ${SRC_DIR}/tuw_lane_utils.c
 )
-        
-set(CPACK_PACKAGE_VERSION_MAJOR "1")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_SOURCE_GENERATOR "TBZ2")
+TARGET_LINK_LIBRARIES(lanetest_all MPI::MPI_C)
 
 
-set(BENCHMARK_NAME ${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH})
+set(BENCHMARK_NAME ${CMAKE_PROJECT_NAME}-${CMAKE_PROJECT_VERSION})
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${BENCHMARK_NAME}-src")
 set(DIST_ARCHIVE "${BENCHMARK_NAME}-dist")
 
+set(CPACK_SOURCE_GENERATOR "TBZ2")
 SET(CPACK_SOURCE_IGNORE_FILES
 "/CMakeFiles/"
 "/_CPack_Packages/"
