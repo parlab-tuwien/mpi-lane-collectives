@@ -13,12 +13,72 @@
 #include <string.h>
 
 #include <mpi.h>
+#include "tuw_lanecoll_internal.h"
 
-#include "tuw_lane_defines.h"
-#include "tuw_lanecoll.h"
-#include "tuw_lanecoll_argparse.h"
-#include "tuw_lane_utils.h"
+void setup_send_recv_buffers(base_t **sendbuf, int num_stype, base_t **recvbuf, int num_rtype, int alloc_both);
+int get_max_count(const int *count_ar, const int count_nb);
+void create_argv_copy(const int argc, char *argv[], char ***argv_copy);
 
+#define STRING_SIZE 256
+#define COUNT_AR_SIZE 30
+
+static void parse_msize_list(char* msizes, int **count_ar, int *count_nb) {
+  char* msizes_tok;
+  char* save_str;
+
+  /* Parse the list of message sizes */
+  if (msizes != NULL) {
+    *count_nb = 0;
+
+    *count_ar = (int*)calloc(COUNT_AR_SIZE, sizeof(int));
+    msizes_tok = strtok_r(msizes, ",", &save_str);
+    while (msizes_tok != NULL) {
+      long msize;
+      msize = atol(msizes_tok);
+      (*count_ar)[*count_nb] = msize;
+      (*count_nb)++;
+      msizes_tok = strtok_r(NULL, ",", &save_str);
+    }
+  }
+}
+
+
+int parse_counts(int argc, char *argv[], int **count_ar, int *count_nb) {
+
+  int ret = 0;
+  int c;
+  extern int opterr, optind;
+
+  // getopt_long should not complain about unrecognized options
+  // we know that this will happen
+  opterr = 0;
+  optind = 1;
+
+  while (1) {
+    static struct option long_options[] =
+        {
+            {"counts",required_argument, 0, 'c'},
+            {0, 0, 0, 0}
+        };
+
+    /* getopt_long stores the option index here. */
+    int option_index = 0;
+
+    c = getopt_long(argc, argv, "c:", long_options, &option_index);
+
+    /* Detect the end of the options. */
+    if (c == -1)
+      break;
+
+    switch (c) {
+    case 'c': {
+      parse_msize_list(optarg, count_ar, count_nb);
+      break;
+    }}
+  }
+
+  return ret;
+}
 
 typedef enum mpi_func {
   UNKNOWN = 0,
@@ -71,6 +131,52 @@ typedef struct args {
   coll_type_t type;
 } bench_arg_t;
 
+
+void create_argv_copy(const int argc, char *argv[], char ***argv_copy) {
+  int i;
+  *argv_copy = (char **)malloc(argc * sizeof(char*));
+  for(i=0; i<argc; i++) {
+    (*argv_copy)[i] = strdup(argv[i]);
+  }
+}
+
+void free_argv_copy(const int argc, char ***argv_copy) {
+  int i;
+  for(i=0; i<argc; i++) {
+    free((*argv_copy)[i]);
+  }
+  free(*argv_copy);
+}
+
+void setup_send_recv_buffers(base_t **sendbuf, int num_stype, base_t **recvbuf, int num_rtype, int alloc_both) {
+
+  *sendbuf = (base_t*) malloc(num_stype * sizeof(base_t));
+  assert(*sendbuf!=NULL);
+  if (recvbuf != NULL && alloc_both == 1) {
+    *recvbuf = (base_t*) malloc(num_rtype * sizeof(base_t));
+    assert(*recvbuf!=NULL);
+  }
+
+}
+
+/*
+ * find maximum count number in count_ar
+ */
+int get_max_count(const int *count_ar, const int count_nb) {
+  int max_count = 0;
+  int i;
+
+  if( count_nb > 0 ) {
+    max_count = count_ar[0];
+  }
+  for(i=1; i<count_nb; i++) {
+    if( count_ar[i] > max_count ) {
+      max_count = count_ar[i];
+    }
+  }
+
+  return max_count;
+}
 
 int parse_bench_args(int argc, char *argv[], bench_arg_t *bench_params) {
   int ret = 0;

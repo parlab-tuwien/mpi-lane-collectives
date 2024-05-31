@@ -12,7 +12,7 @@
 
 #include <mpi.h>
 
-#include "tuw_lanecoll.h"
+#include "../include/tuw_lanecoll.h"
 
 #define SELFCOPY 5000
 #define REGULAR  6000

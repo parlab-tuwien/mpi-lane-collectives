@@ -1,5 +1,5 @@
 
-#include "tuw_lanecoll.h"
+#include "tuw_lanecoll_internal.h"
 
 int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root,
                MPI_Comm comm)
