@@ -9,6 +9,9 @@ project(multilanecomm
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
+set(CMAKE_C_STANDARD 11)
+SET(CMAKE_C_FLAGS "-O2 -Wall -D_POSIX_C_SOURCE=200809L")
+
 find_package(MPI REQUIRED)
 
 #set(SRC_DIR "${CMAKE_SOURCE_DIR}/src")
