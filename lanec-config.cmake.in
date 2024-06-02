@@ -1,0 +1,18 @@
+# Required for check_language
+include(CheckLanguage)
+
+@PACKAGE_INIT@
+
+set_and_check(LANEC_DIR "${PACKAGE_PREFIX_DIR}")
+set_and_check(LANEC_INCLUDE_DIRS "@PACKAGE_MSC_INSTALL_INCLUDEDIR@")
+set_and_check(LANEC_CMAKE_DIRS "@PACKAGE_MSC_INSTALL_CMAKEDIR@")
+set_and_check(LANEC_LIBRARY_DIRS "@PACKAGE_MSC_INSTALL_LIBDIR@")
+
+# Pull the dependencies
+list(APPEND CMAKE_PREFIX_PATH "${LANEC_CMAKE_DIRS}")
+list(APPEND CMAKE_MODULE_PATH "${LANEC_CMAKE_DIRS}")
+
+# Pull the LANEC::<targets>
+if(NOT TARGET LANEC::lanec)
+    include(${CMAKE_CURRENT_LIST_DIR}/LANECTargets.cmake)
+endif(NOT TARGET LANEC::lanec)
