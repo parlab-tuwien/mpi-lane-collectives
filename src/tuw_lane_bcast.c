@@ -76,3 +76,48 @@ int Bcast_lane_on_lane(void *buffer, int count, MPI_Datatype datatype, int root,
 {
   return PMPI_Bcast(buffer, count, datatype, root, comm);
 }
+
+
+int Bcast_hier(void *buffer, int count, MPI_Datatype datatype, int root,
+               MPI_Comm comm)
+{
+  static MPI_Comm decomm   = MPI_COMM_NULL;
+  static MPI_Comm nodecomm = MPI_COMM_NULL;
+  static MPI_Comm lanecomm = MPI_COMM_NULL;
+
+  int size;
+  int lanerank, noderank, nodesize;
+  int rootnode, noderoot;
+
+  PMPI_Comm_size(comm,&size);
+  if (count==0||size==1) return MPI_SUCCESS;
+
+  if (comm!=decomm) {
+    Get_Lane_comms(comm,&nodecomm,&lanecomm);
+    decomm = comm;
+  }
+
+  PMPI_Comm_rank(nodecomm,&noderank);
+  PMPI_Comm_size(nodecomm,&nodesize);
+  PMPI_Comm_rank(lanecomm,&lanerank);
+
+  rootnode = root/nodesize;
+  noderoot = root%nodesize;
+
+  if (noderank==noderoot) {
+    Bcast_hier_on_lane(buffer,count,datatype,rootnode,lanecomm);
+  }
+  Bcast_hier_on_node(buffer,count,datatype,noderoot,nodecomm);
+
+  return MPI_SUCCESS;
+}
+
+int Bcast_hier_on_lane(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm)
+{
+  return PMPI_Bcast(buffer, count, datatype, root, comm);
+}
+
+int Bcast_hier_on_node(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm)
+{
+  return PMPI_Bcast(buffer, count, datatype, root, comm);
+}

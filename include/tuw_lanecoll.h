@@ -14,6 +14,12 @@ int Bcast_lane(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Com
 
 int Bcast_lane_on_lane(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
 
+int Bcast_hier(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+
+int Bcast_hier_on_lane(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+
+int Bcast_hier_on_node(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
+
 int Gather_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount,
     MPI_Datatype recvtype, int root, MPI_Comm comm);
 
@@ -38,8 +44,6 @@ int Exscan_lane(const void *sendbuf, void *recvbuf, int count, MPI_Datatype data
 
 int Alltoall_lane(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount,
     MPI_Datatype recvtype, MPI_Comm comm);
-
-int Bcast_hier(void *buffer, int count, MPI_Datatype datatype, int root, MPI_Comm comm);
 
 int Gather_hier(const void *sendbuf, int sendcount, MPI_Datatype sendtype, void *recvbuf, int recvcount,
     MPI_Datatype recvtype, int root, MPI_Comm comm);
