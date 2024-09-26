@@ -84,7 +84,7 @@ target_link_libraries(lanec PUBLIC MPI::MPI_C)
 #        PUBLIC_HEADER "include/tuw_schedule_collectives.h")
 
 configure_package_config_file(lanec-config.cmake.in
-        ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/lanec-config.cmake
+        ${PROJECT_SOURCE_DIR}${CMAKE_FILES_DIRECTORY}/lanec-config.cmake
         INSTALL_DESTINATION ${LANEC_INSTALL_CMAKEDIR}
         PATH_VARS LANEC_INSTALL_LIBDIR
         LANEC_INSTALL_INCLUDEDIR
