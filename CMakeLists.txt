@@ -84,7 +84,7 @@ target_link_libraries(lanec PUBLIC MPI::MPI_C)
 #        PUBLIC_HEADER "include/tuw_schedule_collectives.h")
 
 configure_package_config_file(lanec-config.cmake.in
-        ${PROJECT_SOURCE_DIR}${CMAKE_FILES_DIRECTORY}/lanec-config.cmake
+        ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/lanec-config.cmake
         INSTALL_DESTINATION ${LANEC_INSTALL_CMAKEDIR}
         PATH_VARS LANEC_INSTALL_LIBDIR
         LANEC_INSTALL_INCLUDEDIR
@@ -92,15 +92,15 @@ configure_package_config_file(lanec-config.cmake.in
         LANEC_INSTALL_LIBEXECDIR
         LANEC_INSTALL_CMAKEDIR)
 
+install(FILES ${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/lanec-config.cmake
+        DESTINATION ${LANEC_INSTALL_CMAKEDIR})
+
 install(TARGETS lanec
         EXPORT lanec-targets
         LIBRARY DESTINATION ${LANEC_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${LANEC_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${LANEC_INSTALL_BINDIR}
         PUBLIC_HEADER DESTINATION ${LANEC_INSTALL_INCLUDEDIR})
-
-install(FILES ${CMAKE_SOURCE_DIR}${CMAKE_FILES_DIRECTORY}/lanec-config.cmake
-        DESTINATION ${LANEC_INSTALL_CMAKEDIR})
 
 install(EXPORT lanec-targets # rules to export the targets built here
         FILE LANECTargets.cmake
